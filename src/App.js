@@ -1,7 +1,9 @@
 import logo from './logo.svg';
 import './App.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import UserForm from './components/UserForm';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import AdminLogin from './components/AdminLogin';
 
 function App() {
   return (
@@ -21,9 +23,16 @@ function App() {
     //     </a>
     //   </header>
     // </div>
-    <div>
-      <UserForm/>
-    </div>
+    <Router>
+      <div>
+        <Routes>
+          <Route path="/" element={<UserForm/>}/>
+          <Route path="/admin-login" element={<AdminLogin/>} />
+        </Routes>
+      {/* <UserForm/>
+      <AdminLogin/> */}
+      </div>
+    </Router>
   );
 }
 
