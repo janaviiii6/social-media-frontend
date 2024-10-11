@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import UserForm from './components/UserForm';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AdminLogin from './components/AdminLogin';
+import AdminDashboard from './components/AdminDashboard';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Routes>
           <Route path="/" element={<UserForm/>}/>
           <Route path="/admin-login" element={<AdminLogin/>} />
+          <Route path="/admin-dashboard" element={<AdminDashboard/>} />
         </Routes>
       {/* <UserForm/>
       <AdminLogin/> */}
