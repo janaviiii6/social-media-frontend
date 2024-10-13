@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const AdminLogin = () => {
-    const [userName, setUserName] = useState('');
+    const [username, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -10,19 +10,31 @@ const AdminLogin = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const loginData = {
-            userName: 'admin8',
-            password: 'adminWorld',
-        };
+        setErrorMessage('');
 
-        console.log(userName);
-        console.log(password);
+        try{
+            const response = await axios.post('http://localhost:5000/admin-login', { username, password});
 
-        if(userName === loginData.userName && password === loginData.password) {
-            setIsLoggedIn(true);
-            console.log("Login Successfully");
-        } else {
-            console.log("Invalid username or password");
+            if(response.status === 200) {
+                setIsLoggedIn(true);
+                console.log("Login successfully");
+            } else {
+                setIsLoggedIn(false);
+                setErrorMessage('Invalid username or password');
+            }
+        } catch(error) {
+            console.error("Error logging in:",error);
+            
+            if(error.response) {
+                if(error.response.status === 401) {
+                    setErrorMessage('Invalid username or password'); 
+                } else {
+                    setErrorMessage('An error occurred, please try again later')
+                }
+            } else {
+                setErrorMessage('Network error');
+            }
+            setIsLoggedIn(false);
         }
     };
 
@@ -44,7 +56,7 @@ const AdminLogin = () => {
                                 <input
                                     type="text"
                                     className="form-control"
-                                    value={userName}
+                                    value={username}
                                     onChange={(e) => setUserName(e.target.value)}
                                     required
                                 />
