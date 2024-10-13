@@ -3,26 +3,42 @@ import axios from 'axios';
 
 const UserForm = () => {
     const [name,setName] = useState('');
-    const [userName, setUserName] = useState('');
+    const [username, setUserName] = useState('');
     const [images,setImages] = useState([]);
 
     const handleImageChange = (event) => {
-        setImages(event.target.files);
+        const selectedFiles = Array.from(event.target.files);
+        setImages((prevImages) => [...prevImages, ...selectedFiles]);
     };
 
     const handleSubmit = async(event) => {
         event.preventDefault();
         const formData = new FormData();
         formData.append('name',name);
-        formData.append('userName',userName);
+        formData.append('userName',username);
 
         for(let i = 0; i< images.length;i++) {
-            formData.append('images',images[i]);
+            formData.append(`images[$i]`,images[i]);
         }
         
         console.log("Name:", name);
-        console.log("Social media Handle:", userName);
+        console.log("Social media Handle:", username);
         console.log("Uploaded Images:", images);
+
+
+        try{
+            const response = await axios.post('http://localhost:5000/submit',formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            console.log(response.data);
+            alert('Submitted successfully!');
+        } catch(error) {
+            console.error("Error uploading images:",error);
+            alert('Error submitting the form, please try again');
+        }
 
     };
 
@@ -49,7 +65,7 @@ const UserForm = () => {
                         <input
                             className="form-control"
                             type="text"
-                            value={userName}
+                            value={username}
                             onChange={(e) => setUserName(e.target.value)}
                             required
                         />
