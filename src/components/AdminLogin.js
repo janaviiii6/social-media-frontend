@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const AdminLogin = () => {
     const [username, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -18,6 +20,8 @@ const AdminLogin = () => {
             if(response.status === 200) {
                 setIsLoggedIn(true);
                 console.log("Login successfully");
+
+                navigate('/admin-dashboard');
             } else {
                 setIsLoggedIn(false);
                 setErrorMessage('Invalid username or password');
