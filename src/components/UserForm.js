@@ -5,6 +5,10 @@ const UserForm = () => {
     const [name,setName] = useState('');
     const [username, setUserName] = useState('');
     const [images,setImages] = useState([]);
+    const [message, setMessage] = useState('');
+
+    const specialCharRegex = /^[a-zA-Z0-9!@#$%^&*)(+=._-]*$/;
+
 
     const handleImageChange = (event) => {
         const selectedFiles = Array.from(event.target.files);
@@ -13,18 +17,39 @@ const UserForm = () => {
 
     const handleSubmit = async(event) => {
         event.preventDefault();
+
+        
+        if (!name || !username) {
+            setMessage('Name and Username are required.');
+            alert('Name and Username are required.');
+            return;
+        }
+
+        if (username.length < 1) {
+            setMessage('Username should have at least one character.');
+            alert('Username should have at least one character.');
+            return;
+        }
+
+        if (!specialCharRegex.test(username)) {
+            setMessage('Username must include at least one special character');
+            alert('Username must include at least one special character');
+            return;
+        }
         const formData = new FormData();
         formData.append('name',name);
-        formData.append('userName',username);
+        formData.append('username',username);
 
         for(let i = 0; i< images.length;i++) {
-            formData.append(`images[$i]`,images[i]);
+            formData.append(`images[]`,images[i]);
         }
-        
+        for (let pair of formData.entries()) {
+            console.log(pair[0]+ ', ' + pair[1]);
+        }
+
         console.log("Name:", name);
         console.log("Social media Handle:", username);
         console.log("Uploaded Images:", images);
-
 
         try{
             const response = await axios.post('http://localhost:5000/submit',formData, {
@@ -33,11 +58,20 @@ const UserForm = () => {
                 },
             });
 
-            console.log(response.data);
-            alert('Submitted successfully!');
-        } catch(error) {
-            console.error("Error uploading images:",error);
-            alert('Error submitting the form, please try again');
+            console.log("Server Response:", response);
+
+            if(response.status === 200) {
+                setMessage('User submitted successfully!');
+            } else {
+                setMessage('Submission failed, please try again.')
+            }
+        } catch (error) {
+            console.error('Submission Error:', error); // Log the error
+            if (error.response && error.response.data.message) {
+                setMessage(error.response.data.message); // Backend error message
+            } else {
+                setMessage('Error submitting form, please try again later.');
+            }
         }
 
     };
